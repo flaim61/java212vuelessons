@@ -1,0 +1,13 @@
+body{
+  border: 1px solid black;
+  width: 1000px;
+  margin: 0 auto;
+}
+
+#app{
+  display: flex;
+}
+
+html{
+  font-family: 'Montserrat', sans-serif;
+}
