@@ -11,3 +11,7 @@ app.use(VueAxios, axios)
 app.use(router)
 
 app.mount('#app')
+
+/**
+  Получить на странице "Пользователи", список пользователей с роута https://jsonplaceholder.typicode.com/
+*/
