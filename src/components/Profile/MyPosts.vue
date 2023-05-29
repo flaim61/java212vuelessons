@@ -6,70 +6,74 @@
     <label for="">Заголовок</label>
     <input type="text" v-model="title" placeholder="Введите заголовок">
     <label for="">Текст</label>
-    <textarea name="name" v-model="text" placeholder="Введите текст"></textarea>
+    <textarea name="name" v-model="body" placeholder="Введите текст"></textarea>
     <span @click='addPost' class="addButton">Отправить</span>
   </div>
-  <div class="post" v-for="(post, index) in this.posts">
-    <h4>
-      {{ post.title }}
-    </h4>
+  <div class="post" v-for="(post, index) in this.posts" @click='this.$router.push("/post/"+post.id);'>
+    <div class="post_header">
+      <h4>
+        {{ post.title }}
+      </h4>
+      <div @click='this.deletePost(index)' class="deletePostButton">
+        x
+      </div>
+    </div>
     <p>
-      {{ post.text }}
+      {{ post.body }}
     </p>
   </div>
 </template>
 
 <script>
+  import { getPosts } from '@/services/index.js'
+
   export default {
     name: "MyPosts",
     data(){
       return {
         title: "",
-        text: "",
-        posts: [
-          {
-            id: 1,
-            title: "Пост1",
-            text: "Какой-то текст"
-          },
-          {
-            id: 2,
-            title: "Пост2",
-            text: "Какой-то текст 2"
-          },
-          {
-            id: 3,
-            title: "Пост3",
-            text: "Какой-то текст 3"
-          },
-          {
-            id: 4,
-            title: "Пост 4",
-            text: "Какой-то текст"
-          },
-          {
-            id: 5,
-            title: "Пост5",
-            text: "Какой-то текст"
-          }
-        ]
+        body: "",
+        posts: [],
       }
+    },
+    async created(){
+      this.posts = await this.getPosts();
     },
     methods: {
       addPost(){
-        this.posts.push({
+        this.posts.unshift({
           title: this.title,
-          text: this.text
+          body: this.body
         });
 
         this.title = "";
-        this.text = "";
+        this.body = "";
+      },
+      deletePost(index){
+        this.posts.splice(index, 1);
+      },
+      async getPosts(){
+        const response = await getPosts();
+
+        if (response.status === 200) {
+          return response.data;
+        }else{
+          return [];
+        }
       }
-    }
+    },
   }
 </script>
 
 <style>
+  .deletePostButton{
+    cursor: pointer;
+  }
+  .post_header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
   .add_post_form{
     display: flex;
     flex-direction: column;
@@ -78,7 +82,7 @@
     margin-bottom: 10px
   }
   .post{
-    width: 100%;
+    width: 98%;
     border: 1px solid black;
     padding: 5px;
     margin-bottom: 10px;
